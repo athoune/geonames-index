@@ -1,3 +1,6 @@
+$: << './lib'
+require 'geoname'
+
 file 'hierarchy.zip' do
   `curl -O http://download.geonames.org/export/dump/hierarchy.zip`
 end
@@ -9,11 +12,17 @@ end
 task :zip => ['hierarchy.zip', 'allCountries.zip']
 
 file 'hierarchy.txt' => 'hierarchy.zip' do
-  `unzip hierarchy.zip`
+  `unzip hierarchy.zip` unless File.exist? 'hierarchy.txt' # FIXME
 end
 
 file 'allCountries.txt' => 'allCountries.zip' do
-  `unzip allCountries.zip`
+  `unzip allCountries.zip` unless File.exist? 'allCountries.txt' # FIXME
 end
 
-task :data => ['allCountries.txt', 'hierarchy.txt']
+task :data => ['allCountries.txt', 'hierarchy.txt' ]
+
+task :index => :data do
+  f = File.open 'allCountries.txt'
+  idx = ::Geoname::Index.new 'geoname'
+  idx.index f
+end
