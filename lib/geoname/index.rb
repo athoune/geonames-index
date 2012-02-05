@@ -9,7 +9,7 @@ module Geoname
     def initialize name
       @name = name
       @created = false
-      @batch_size = 10000
+      @batch_size = 1000
     end
 
     def delete
