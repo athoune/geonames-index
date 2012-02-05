@@ -6,10 +6,14 @@ module Geoname
 
   class Index
 
+    attr_accessor :hierarchy
+    attr_reader :name
+
     def initialize name
       @name = name
       @created = false
       @batch_size = 1000
+      @hierarchy = nil
     end
 
     def delete
@@ -39,6 +43,10 @@ module Geoname
       values['alternatenames'] = values['alternatenames'].split(',')
       %w{latitude longitude}.each do |f|
         values[f] = values[f].to_f
+      end
+      if @hierarchy
+        p = @hierarchy.hierarchy[values['id']]
+        values['path'] = p.join('/') if p
       end
       values
     end
