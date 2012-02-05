@@ -28,16 +28,27 @@ module Geoname
       end
     end
 
+    def read_line line
+      keys = %w{id name asciiname alternatenames latitude longitude feature_class feature_code country_code cc2 admin1 admin2 admin3 admin4 population elevation gtopo30 timezone modification}
+      values = {}
+      i = 0
+      line[0..-2].split("\t").each do |v|
+        values[keys[i]] = v
+        i += 1
+      end
+      values['alternatenames'] = values['alternatenames'].split(',')
+      %w{latitude longitude}.each do |f|
+        values[f] = values[f].to_f
+      end
+      values
+    end
+
     def index data
       cpt = 0
       values = []
       data.each do |line|
-        cpt += 1
-        id, name = line.split("\t")
-        values << {
-          id: id,
-          name: name
-        }
+        values << read_line(line)
+       cpt += 1
        if (cpt % @batch_size) == 0
          batch_index values
          yield cpt
