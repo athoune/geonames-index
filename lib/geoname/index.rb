@@ -9,7 +9,7 @@ module Geoname
     def initialize name
       @name = name
       @created = false
-      @batch_size = 100
+      @batch_size = 10000
     end
 
     def delete
@@ -38,7 +38,10 @@ module Geoname
           id: id,
           name: name
         }
-        batch_index values if (cpt % @batch_size) == 0
+       if (cpt % @batch_size) == 0
+         batch_index values
+         yield cpt
+       end
       end
       data.close
     end

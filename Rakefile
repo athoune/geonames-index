@@ -24,5 +24,7 @@ task :data => ['allCountries.txt', 'hierarchy.txt' ]
 task :index => :data do
   f = File.open 'allCountries.txt'
   idx = ::Geoname::Index.new 'geoname'
-  idx.index f
+  idx.index f do |cpt|
+    p cpt
+  end
 end
