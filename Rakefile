@@ -21,9 +21,15 @@ end
 
 task :data => ['allCountries.txt', 'hierarchy.txt' ]
 
-task :index => :data do
+task :hierarchy => 'hierarchy.txt' do
+  f = File.open 'hierarchy.txt'
+  $hierarchy = Geoname::Hierarchy.new f
+end
+
+task :index => ['allCountries.txt', :hierarchy] do
   f = File.open 'allCountries.txt'
   idx = ::Geoname::Index.new 'geoname'
+  idx.hierarchy = $hierarchy
   idx.index f do |cpt|
     p cpt
   end
